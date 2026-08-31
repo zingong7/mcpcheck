@@ -1,0 +1,1958 @@
+{
+  "runs": [
+    {
+      "server": "mcp-server-git",
+      "command": "C:\\Users\\EuroG\\OneDrive\\Desktop\\Projects\\mcpcheck\\.venv\\Scripts\\python.exe -m mcp_server_git",
+      "reachable": true,
+      "problem": "",
+      "identity": "mcp-git 1.29.1",
+      "counts": {
+        "pass": 20,
+        "warn": 0,
+        "fail": 9,
+        "skip": 0,
+        "error": 0
+      },
+      "results": [
+        {
+          "id": "init-shape",
+          "title": "initialize returns the required fields",
+          "severity": "spec",
+          "ref": "MCP lifecycle: InitializeResult carries protocolVersion, capabilities, serverInfo",
+          "status": "pass",
+          "detail": "mcp-git 1.29.1, protocol 2025-06-18",
+          "seconds": 0.463
+        },
+        {
+          "id": "init-version",
+          "title": "unsupported protocol version is negotiated, not echoed",
+          "severity": "spec",
+          "ref": "MCP lifecycle: a server that does not support the requested version MUST reply with one it does",
+          "status": "pass",
+          "detail": "negotiated down to 2025-11-25",
+          "seconds": 0.465
+        },
+        {
+          "id": "init-twice",
+          "title": "a second initialize does not take the server down",
+          "severity": "robust",
+          "ref": "not specified; a client that reconnects badly should not be able to kill the process",
+          "status": "pass",
+          "detail": "still serving after a duplicate handshake",
+          "seconds": 0.468
+        },
+        {
+          "id": "pre-init",
+          "title": "a request before initialize is refused, not crashed on",
+          "severity": "robust",
+          "ref": "MCP lifecycle: clients SHOULD NOT send requests before initialize; server behaviour is unspecified",
+          "status": "pass",
+          "detail": "refused with -32602",
+          "seconds": 0.472
+        },
+        {
+          "id": "caps-honoured",
+          "title": "declared capabilities actually work",
+          "severity": "spec",
+          "ref": "MCP: a server that advertises a capability has to serve it",
+          "status": "pass",
+          "detail": "serves tools",
+          "seconds": 0.493
+        },
+        {
+          "id": "unknown-method",
+          "title": "unknown method returns -32601",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "expected code -32601, got -32602 (Invalid request parameters)",
+          "seconds": 0.481
+        },
+        {
+          "id": "no-method",
+          "title": "request with no method returns -32600",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: an object without a method member is not a valid request",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.881
+        },
+        {
+          "id": "no-version",
+          "title": "request without jsonrpc:2.0 is rejected",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4: the jsonrpc member MUST be exactly '2.0'",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.882
+        },
+        {
+          "id": "parse-error",
+          "title": "broken JSON returns -32700",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "no parse error came back",
+          "seconds": 6.876
+        },
+        {
+          "id": "parse-error-survives",
+          "title": "the session outlives a malformed message",
+          "severity": "robust",
+          "ref": "not specified; one bad line from a proxy or a stray log write should not end the session",
+          "status": "fail",
+          "detail": "session unusable afterwards: stdout closed (rc=None)",
+          "seconds": 0.535
+        },
+        {
+          "id": "id-echo",
+          "title": "response id matches the request id exactly",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5: id MUST be the same value, and the comparison is type sensitive",
+          "status": "pass",
+          "detail": "string ids round trip",
+          "seconds": 0.464
+        },
+        {
+          "id": "response-shape",
+          "title": "responses carry jsonrpc:2.0 and exactly one of result/error",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5",
+          "status": "pass",
+          "detail": "well formed",
+          "seconds": 0.458
+        },
+        {
+          "id": "notification-silence",
+          "title": "an unknown notification draws no response",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4.1: the server MUST NOT reply to a notification",
+          "status": "pass",
+          "detail": "silent",
+          "seconds": 2.468
+        },
+        {
+          "id": "invalid-params",
+          "title": "wrong-shaped params are refused",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: -32602 for invalid params",
+          "status": "fail",
+          "detail": "no response to a request whose params were a string",
+          "seconds": 8.919
+        },
+        {
+          "id": "pipelined-ids",
+          "title": "three requests in flight all come back",
+          "severity": "spec",
+          "ref": "MCP: requests are asynchronous, a client does not have to wait for each reply",
+          "status": "pass",
+          "detail": "all three, order irrelevant",
+          "seconds": 0.896
+        },
+        {
+          "id": "tools-shape",
+          "title": "every tool has a name and an object inputSchema",
+          "severity": "spec",
+          "ref": "MCP tools: name and inputSchema are required, and inputSchema is a JSON Schema object",
+          "status": "pass",
+          "detail": "12 tools, all declared properly",
+          "seconds": 0.463
+        },
+        {
+          "id": "tools-unique",
+          "title": "tool names are unique",
+          "severity": "spec",
+          "ref": "MCP tools: the name is how a tool is addressed, so duplicates are unresolvable",
+          "status": "pass",
+          "detail": "12 distinct names",
+          "seconds": 0.458
+        },
+        {
+          "id": "tools-described",
+          "title": "tools carry a description",
+          "severity": "robust",
+          "ref": "not required by the spec, but the description is the only thing a model has to choose on",
+          "status": "pass",
+          "detail": "all 12 described, shortest is 17 chars",
+          "seconds": 0.472
+        },
+        {
+          "id": "params-described",
+          "title": "tool arguments carry descriptions",
+          "severity": "robust",
+          "ref": "not required; an argument with no description is guesswork for the model filling it in",
+          "status": "fail",
+          "detail": "22 of 28 undescribed: git_status.repo_path, git_diff_unstaged.repo_path, git_diff_unstaged.context_lines, git_diff_staged.repo_path, git_diff_staged.context_lines",
+          "seconds": 0.481
+        },
+        {
+          "id": "unknown-tool",
+          "title": "calling a tool that does not exist is an error",
+          "severity": "spec",
+          "ref": "MCP tools: an unknown tool name is an error, either a JSON-RPC error or isError on the result",
+          "status": "pass",
+          "detail": "isError result",
+          "seconds": 0.479
+        },
+        {
+          "id": "missing-required-arg",
+          "title": "a required argument is actually enforced",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "git_status without 'repo_path' -> isError",
+          "seconds": 0.491
+        },
+        {
+          "id": "wrong-arg-type",
+          "title": "an argument of the wrong type is rejected",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "git_status with an int for 'repo_path' -> isError",
+          "seconds": 0.466
+        },
+        {
+          "id": "stdout-clean",
+          "title": "nothing but MCP messages goes to stdout",
+          "severity": "spec",
+          "ref": "MCP stdio transport: the server MUST NOT write anything to stdout that is not a valid MCP message",
+          "status": "pass",
+          "detail": "clean",
+          "seconds": 0.993
+        },
+        {
+          "id": "big-payload",
+          "title": "a 256KB argument does not kill the server",
+          "severity": "robust",
+          "ref": "not specified; a large paste is an ordinary thing for a model to send",
+          "status": "pass",
+          "detail": "handled, result",
+          "seconds": 0.484
+        },
+        {
+          "id": "awkward-strings",
+          "title": "control characters and astral unicode survive the wire",
+          "severity": "robust",
+          "ref": "MCP stdio transport: messages are newline delimited, so anything newline shaped is a framing risk",
+          "status": "pass",
+          "detail": "round tripped",
+          "seconds": 0.469
+        },
+        {
+          "id": "deep-nesting",
+          "title": "a deeply nested argument is refused, not fatal",
+          "severity": "robust",
+          "ref": "not specified; recursive parsers tend to blow the stack somewhere and it should be an error",
+          "status": "fail",
+          "detail": "no response to 400 levels of nesting",
+          "seconds": 15.472
+        },
+        {
+          "id": "cancel-unknown",
+          "title": "cancelling a request that is not running is ignored",
+          "severity": "robust",
+          "ref": "MCP: a cancellation for an unknown id can race legitimately, so it has to be survivable",
+          "status": "pass",
+          "detail": "ignored",
+          "seconds": 1.879
+        },
+        {
+          "id": "clean-exit",
+          "title": "closing stdin ends the process",
+          "severity": "robust",
+          "ref": "MCP stdio transport: the client shuts a server down by closing its input stream",
+          "status": "pass",
+          "detail": "exited with 0",
+          "seconds": 0.54
+        },
+        {
+          "id": "no-batch-crash",
+          "title": "a JSON-RPC batch is answered or refused, not fatal",
+          "severity": "robust",
+          "ref": "batching was removed in MCP 2025-06-18, so the useful question is only whether it is survivable",
+          "status": "fail",
+          "detail": "session dead after a batch: stdout closed (rc=None)",
+          "seconds": 2.051
+        }
+      ]
+    },
+    {
+      "server": "mcp-server-time",
+      "command": "C:\\Users\\EuroG\\OneDrive\\Desktop\\Projects\\mcpcheck\\.venv\\Scripts\\python.exe -m mcp_server_time",
+      "reachable": true,
+      "problem": "",
+      "identity": "mcp-time 1.29.1",
+      "counts": {
+        "pass": 23,
+        "warn": 0,
+        "fail": 6,
+        "skip": 0,
+        "error": 0
+      },
+      "results": [
+        {
+          "id": "init-shape",
+          "title": "initialize returns the required fields",
+          "severity": "spec",
+          "ref": "MCP lifecycle: InitializeResult carries protocolVersion, capabilities, serverInfo",
+          "status": "pass",
+          "detail": "mcp-time 1.29.1, protocol 2025-06-18",
+          "seconds": 0.39
+        },
+        {
+          "id": "init-version",
+          "title": "unsupported protocol version is negotiated, not echoed",
+          "severity": "spec",
+          "ref": "MCP lifecycle: a server that does not support the requested version MUST reply with one it does",
+          "status": "pass",
+          "detail": "negotiated down to 2025-11-25",
+          "seconds": 0.392
+        },
+        {
+          "id": "init-twice",
+          "title": "a second initialize does not take the server down",
+          "severity": "robust",
+          "ref": "not specified; a client that reconnects badly should not be able to kill the process",
+          "status": "pass",
+          "detail": "still serving after a duplicate handshake",
+          "seconds": 0.394
+        },
+        {
+          "id": "pre-init",
+          "title": "a request before initialize is refused, not crashed on",
+          "severity": "robust",
+          "ref": "MCP lifecycle: clients SHOULD NOT send requests before initialize; server behaviour is unspecified",
+          "status": "pass",
+          "detail": "refused with -32602",
+          "seconds": 0.384
+        },
+        {
+          "id": "caps-honoured",
+          "title": "declared capabilities actually work",
+          "severity": "spec",
+          "ref": "MCP: a server that advertises a capability has to serve it",
+          "status": "pass",
+          "detail": "serves tools",
+          "seconds": 0.401
+        },
+        {
+          "id": "unknown-method",
+          "title": "unknown method returns -32601",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "expected code -32601, got -32602 (Invalid request parameters)",
+          "seconds": 0.396
+        },
+        {
+          "id": "no-method",
+          "title": "request with no method returns -32600",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: an object without a method member is not a valid request",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.805
+        },
+        {
+          "id": "no-version",
+          "title": "request without jsonrpc:2.0 is rejected",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4: the jsonrpc member MUST be exactly '2.0'",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.835
+        },
+        {
+          "id": "parse-error",
+          "title": "broken JSON returns -32700",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "logged the parse error as a notification instead of answering it",
+          "seconds": 6.803
+        },
+        {
+          "id": "parse-error-survives",
+          "title": "the session outlives a malformed message",
+          "severity": "robust",
+          "ref": "not specified; one bad line from a proxy or a stray log write should not end the session",
+          "status": "pass",
+          "detail": "recovered",
+          "seconds": 0.4
+        },
+        {
+          "id": "id-echo",
+          "title": "response id matches the request id exactly",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5: id MUST be the same value, and the comparison is type sensitive",
+          "status": "pass",
+          "detail": "string ids round trip",
+          "seconds": 0.391
+        },
+        {
+          "id": "response-shape",
+          "title": "responses carry jsonrpc:2.0 and exactly one of result/error",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5",
+          "status": "pass",
+          "detail": "well formed",
+          "seconds": 0.392
+        },
+        {
+          "id": "notification-silence",
+          "title": "an unknown notification draws no response",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4.1: the server MUST NOT reply to a notification",
+          "status": "pass",
+          "detail": "silent",
+          "seconds": 2.389
+        },
+        {
+          "id": "invalid-params",
+          "title": "wrong-shaped params are refused",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: -32602 for invalid params",
+          "status": "fail",
+          "detail": "no response to a request whose params were a string",
+          "seconds": 8.815
+        },
+        {
+          "id": "pipelined-ids",
+          "title": "three requests in flight all come back",
+          "severity": "spec",
+          "ref": "MCP: requests are asynchronous, a client does not have to wait for each reply",
+          "status": "pass",
+          "detail": "all three, order irrelevant",
+          "seconds": 0.811
+        },
+        {
+          "id": "tools-shape",
+          "title": "every tool has a name and an object inputSchema",
+          "severity": "spec",
+          "ref": "MCP tools: name and inputSchema are required, and inputSchema is a JSON Schema object",
+          "status": "pass",
+          "detail": "2 tools, all declared properly",
+          "seconds": 0.409
+        },
+        {
+          "id": "tools-unique",
+          "title": "tool names are unique",
+          "severity": "spec",
+          "ref": "MCP tools: the name is how a tool is addressed, so duplicates are unresolvable",
+          "status": "pass",
+          "detail": "2 distinct names",
+          "seconds": 0.406
+        },
+        {
+          "id": "tools-described",
+          "title": "tools carry a description",
+          "severity": "robust",
+          "ref": "not required by the spec, but the description is the only thing a model has to choose on",
+          "status": "pass",
+          "detail": "all 2 described, shortest is 30 chars",
+          "seconds": 0.408
+        },
+        {
+          "id": "params-described",
+          "title": "tool arguments carry descriptions",
+          "severity": "robust",
+          "ref": "not required; an argument with no description is guesswork for the model filling it in",
+          "status": "pass",
+          "detail": "all 4 arguments described",
+          "seconds": 0.408
+        },
+        {
+          "id": "unknown-tool",
+          "title": "calling a tool that does not exist is an error",
+          "severity": "spec",
+          "ref": "MCP tools: an unknown tool name is an error, either a JSON-RPC error or isError on the result",
+          "status": "pass",
+          "detail": "isError result",
+          "seconds": 0.408
+        },
+        {
+          "id": "missing-required-arg",
+          "title": "a required argument is actually enforced",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "get_current_time without 'timezone' -> isError",
+          "seconds": 0.39
+        },
+        {
+          "id": "wrong-arg-type",
+          "title": "an argument of the wrong type is rejected",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "get_current_time with an int for 'timezone' -> isError",
+          "seconds": 0.399
+        },
+        {
+          "id": "stdout-clean",
+          "title": "nothing but MCP messages goes to stdout",
+          "severity": "spec",
+          "ref": "MCP stdio transport: the server MUST NOT write anything to stdout that is not a valid MCP message",
+          "status": "pass",
+          "detail": "clean",
+          "seconds": 0.901
+        },
+        {
+          "id": "big-payload",
+          "title": "a 256KB argument does not kill the server",
+          "severity": "robust",
+          "ref": "not specified; a large paste is an ordinary thing for a model to send",
+          "status": "pass",
+          "detail": "handled, result",
+          "seconds": 0.401
+        },
+        {
+          "id": "awkward-strings",
+          "title": "control characters and astral unicode survive the wire",
+          "severity": "robust",
+          "ref": "MCP stdio transport: messages are newline delimited, so anything newline shaped is a framing risk",
+          "status": "pass",
+          "detail": "round tripped",
+          "seconds": 0.391
+        },
+        {
+          "id": "deep-nesting",
+          "title": "a deeply nested argument is refused, not fatal",
+          "severity": "robust",
+          "ref": "not specified; recursive parsers tend to blow the stack somewhere and it should be an error",
+          "status": "fail",
+          "detail": "no response to 400 levels of nesting",
+          "seconds": 15.411
+        },
+        {
+          "id": "cancel-unknown",
+          "title": "cancelling a request that is not running is ignored",
+          "severity": "robust",
+          "ref": "MCP: a cancellation for an unknown id can race legitimately, so it has to be survivable",
+          "status": "pass",
+          "detail": "ignored",
+          "seconds": 1.804
+        },
+        {
+          "id": "clean-exit",
+          "title": "closing stdin ends the process",
+          "severity": "robust",
+          "ref": "MCP stdio transport: the client shuts a server down by closing its input stream",
+          "status": "pass",
+          "detail": "exited with 0",
+          "seconds": 0.461
+        },
+        {
+          "id": "no-batch-crash",
+          "title": "a JSON-RPC batch is answered or refused, not fatal",
+          "severity": "robust",
+          "ref": "batching was removed in MCP 2025-06-18, so the useful question is only whether it is survivable",
+          "status": "pass",
+          "detail": "survived",
+          "seconds": 1.905
+        }
+      ]
+    },
+    {
+      "server": "mcp-server-fetch",
+      "command": "C:\\Users\\EuroG\\OneDrive\\Desktop\\Projects\\mcpcheck\\.venv\\Scripts\\python.exe -m mcp_server_fetch",
+      "reachable": true,
+      "problem": "",
+      "identity": "mcp-fetch 1.29.1",
+      "counts": {
+        "pass": 23,
+        "warn": 0,
+        "fail": 6,
+        "skip": 0,
+        "error": 0
+      },
+      "results": [
+        {
+          "id": "init-shape",
+          "title": "initialize returns the required fields",
+          "severity": "spec",
+          "ref": "MCP lifecycle: InitializeResult carries protocolVersion, capabilities, serverInfo",
+          "status": "pass",
+          "detail": "mcp-fetch 1.29.1, protocol 2025-06-18",
+          "seconds": 0.429
+        },
+        {
+          "id": "init-version",
+          "title": "unsupported protocol version is negotiated, not echoed",
+          "severity": "spec",
+          "ref": "MCP lifecycle: a server that does not support the requested version MUST reply with one it does",
+          "status": "pass",
+          "detail": "negotiated down to 2025-11-25",
+          "seconds": 0.431
+        },
+        {
+          "id": "init-twice",
+          "title": "a second initialize does not take the server down",
+          "severity": "robust",
+          "ref": "not specified; a client that reconnects badly should not be able to kill the process",
+          "status": "pass",
+          "detail": "still serving after a duplicate handshake",
+          "seconds": 0.433
+        },
+        {
+          "id": "pre-init",
+          "title": "a request before initialize is refused, not crashed on",
+          "severity": "robust",
+          "ref": "MCP lifecycle: clients SHOULD NOT send requests before initialize; server behaviour is unspecified",
+          "status": "pass",
+          "detail": "refused with -32602",
+          "seconds": 0.434
+        },
+        {
+          "id": "caps-honoured",
+          "title": "declared capabilities actually work",
+          "severity": "spec",
+          "ref": "MCP: a server that advertises a capability has to serve it",
+          "status": "pass",
+          "detail": "serves tools, prompts",
+          "seconds": 0.443
+        },
+        {
+          "id": "unknown-method",
+          "title": "unknown method returns -32601",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "expected code -32601, got -32602 (Invalid request parameters)",
+          "seconds": 0.465
+        },
+        {
+          "id": "no-method",
+          "title": "request with no method returns -32600",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: an object without a method member is not a valid request",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.842
+        },
+        {
+          "id": "no-version",
+          "title": "request without jsonrpc:2.0 is rejected",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4: the jsonrpc member MUST be exactly '2.0'",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.854
+        },
+        {
+          "id": "parse-error",
+          "title": "broken JSON returns -32700",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "logged the parse error as a notification instead of answering it",
+          "seconds": 6.852
+        },
+        {
+          "id": "parse-error-survives",
+          "title": "the session outlives a malformed message",
+          "severity": "robust",
+          "ref": "not specified; one bad line from a proxy or a stray log write should not end the session",
+          "status": "pass",
+          "detail": "recovered",
+          "seconds": 0.442
+        },
+        {
+          "id": "id-echo",
+          "title": "response id matches the request id exactly",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5: id MUST be the same value, and the comparison is type sensitive",
+          "status": "pass",
+          "detail": "string ids round trip",
+          "seconds": 0.428
+        },
+        {
+          "id": "response-shape",
+          "title": "responses carry jsonrpc:2.0 and exactly one of result/error",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5",
+          "status": "pass",
+          "detail": "well formed",
+          "seconds": 0.431
+        },
+        {
+          "id": "notification-silence",
+          "title": "an unknown notification draws no response",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4.1: the server MUST NOT reply to a notification",
+          "status": "pass",
+          "detail": "silent",
+          "seconds": 2.434
+        },
+        {
+          "id": "invalid-params",
+          "title": "wrong-shaped params are refused",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: -32602 for invalid params",
+          "status": "fail",
+          "detail": "no response to a request whose params were a string",
+          "seconds": 8.854
+        },
+        {
+          "id": "pipelined-ids",
+          "title": "three requests in flight all come back",
+          "severity": "spec",
+          "ref": "MCP: requests are asynchronous, a client does not have to wait for each reply",
+          "status": "pass",
+          "detail": "all three, order irrelevant",
+          "seconds": 0.854
+        },
+        {
+          "id": "tools-shape",
+          "title": "every tool has a name and an object inputSchema",
+          "severity": "spec",
+          "ref": "MCP tools: name and inputSchema are required, and inputSchema is a JSON Schema object",
+          "status": "pass",
+          "detail": "1 tools, all declared properly",
+          "seconds": 0.447
+        },
+        {
+          "id": "tools-unique",
+          "title": "tool names are unique",
+          "severity": "spec",
+          "ref": "MCP tools: the name is how a tool is addressed, so duplicates are unresolvable",
+          "status": "pass",
+          "detail": "1 distinct names",
+          "seconds": 0.449
+        },
+        {
+          "id": "tools-described",
+          "title": "tools carry a description",
+          "severity": "robust",
+          "ref": "not required by the spec, but the description is the only thing a model has to choose on",
+          "status": "pass",
+          "detail": "all 1 described, shortest is 307 chars",
+          "seconds": 0.437
+        },
+        {
+          "id": "params-described",
+          "title": "tool arguments carry descriptions",
+          "severity": "robust",
+          "ref": "not required; an argument with no description is guesswork for the model filling it in",
+          "status": "pass",
+          "detail": "all 4 arguments described",
+          "seconds": 0.433
+        },
+        {
+          "id": "unknown-tool",
+          "title": "calling a tool that does not exist is an error",
+          "severity": "spec",
+          "ref": "MCP tools: an unknown tool name is an error, either a JSON-RPC error or isError on the result",
+          "status": "pass",
+          "detail": "isError result",
+          "seconds": 0.441
+        },
+        {
+          "id": "missing-required-arg",
+          "title": "a required argument is actually enforced",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "fetch without 'url' -> isError",
+          "seconds": 0.435
+        },
+        {
+          "id": "wrong-arg-type",
+          "title": "an argument of the wrong type is rejected",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "fetch with an int for 'url' -> isError",
+          "seconds": 0.437
+        },
+        {
+          "id": "stdout-clean",
+          "title": "nothing but MCP messages goes to stdout",
+          "severity": "spec",
+          "ref": "MCP stdio transport: the server MUST NOT write anything to stdout that is not a valid MCP message",
+          "status": "pass",
+          "detail": "clean",
+          "seconds": 0.953
+        },
+        {
+          "id": "big-payload",
+          "title": "a 256KB argument does not kill the server",
+          "severity": "robust",
+          "ref": "not specified; a large paste is an ordinary thing for a model to send",
+          "status": "pass",
+          "detail": "handled, result",
+          "seconds": 0.428
+        },
+        {
+          "id": "awkward-strings",
+          "title": "control characters and astral unicode survive the wire",
+          "severity": "robust",
+          "ref": "MCP stdio transport: messages are newline delimited, so anything newline shaped is a framing risk",
+          "status": "pass",
+          "detail": "round tripped",
+          "seconds": 0.442
+        },
+        {
+          "id": "deep-nesting",
+          "title": "a deeply nested argument is refused, not fatal",
+          "severity": "robust",
+          "ref": "not specified; recursive parsers tend to blow the stack somewhere and it should be an error",
+          "status": "fail",
+          "detail": "no response to 400 levels of nesting",
+          "seconds": 15.431
+        },
+        {
+          "id": "cancel-unknown",
+          "title": "cancelling a request that is not running is ignored",
+          "severity": "robust",
+          "ref": "MCP: a cancellation for an unknown id can race legitimately, so it has to be survivable",
+          "status": "pass",
+          "detail": "ignored",
+          "seconds": 1.843
+        },
+        {
+          "id": "clean-exit",
+          "title": "closing stdin ends the process",
+          "severity": "robust",
+          "ref": "MCP stdio transport: the client shuts a server down by closing its input stream",
+          "status": "pass",
+          "detail": "exited with 0",
+          "seconds": 0.514
+        },
+        {
+          "id": "no-batch-crash",
+          "title": "a JSON-RPC batch is answered or refused, not fatal",
+          "severity": "robust",
+          "ref": "batching was removed in MCP 2025-06-18, so the useful question is only whether it is survivable",
+          "status": "pass",
+          "detail": "survived",
+          "seconds": 1.95
+        }
+      ]
+    },
+    {
+      "server": "mcp-server-sqlite",
+      "command": "C:\\Users\\EuroG\\OneDrive\\Desktop\\Projects\\mcpcheck\\.venv\\Scripts\\python.exe -c from mcp_server_sqlite import main; main() --db-path data/scratch.db",
+      "reachable": true,
+      "problem": "",
+      "identity": "sqlite 0.1.0",
+      "counts": {
+        "pass": 22,
+        "warn": 0,
+        "fail": 7,
+        "skip": 0,
+        "error": 0
+      },
+      "results": [
+        {
+          "id": "init-shape",
+          "title": "initialize returns the required fields",
+          "severity": "spec",
+          "ref": "MCP lifecycle: InitializeResult carries protocolVersion, capabilities, serverInfo",
+          "status": "pass",
+          "detail": "sqlite 0.1.0, protocol 2025-06-18",
+          "seconds": 0.401
+        },
+        {
+          "id": "init-version",
+          "title": "unsupported protocol version is negotiated, not echoed",
+          "severity": "spec",
+          "ref": "MCP lifecycle: a server that does not support the requested version MUST reply with one it does",
+          "status": "pass",
+          "detail": "negotiated down to 2025-11-25",
+          "seconds": 0.404
+        },
+        {
+          "id": "init-twice",
+          "title": "a second initialize does not take the server down",
+          "severity": "robust",
+          "ref": "not specified; a client that reconnects badly should not be able to kill the process",
+          "status": "pass",
+          "detail": "still serving after a duplicate handshake",
+          "seconds": 0.401
+        },
+        {
+          "id": "pre-init",
+          "title": "a request before initialize is refused, not crashed on",
+          "severity": "robust",
+          "ref": "MCP lifecycle: clients SHOULD NOT send requests before initialize; server behaviour is unspecified",
+          "status": "pass",
+          "detail": "refused with -32602",
+          "seconds": 0.404
+        },
+        {
+          "id": "caps-honoured",
+          "title": "declared capabilities actually work",
+          "severity": "spec",
+          "ref": "MCP: a server that advertises a capability has to serve it",
+          "status": "pass",
+          "detail": "serves tools, resources, prompts",
+          "seconds": 0.402
+        },
+        {
+          "id": "unknown-method",
+          "title": "unknown method returns -32601",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "expected code -32601, got -32602 (Invalid request parameters)",
+          "seconds": 0.391
+        },
+        {
+          "id": "no-method",
+          "title": "request with no method returns -32600",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: an object without a method member is not a valid request",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.804
+        },
+        {
+          "id": "no-version",
+          "title": "request without jsonrpc:2.0 is rejected",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4: the jsonrpc member MUST be exactly '2.0'",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.844
+        },
+        {
+          "id": "parse-error",
+          "title": "broken JSON returns -32700",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "logged the parse error as a notification instead of answering it",
+          "seconds": 6.819
+        },
+        {
+          "id": "parse-error-survives",
+          "title": "the session outlives a malformed message",
+          "severity": "robust",
+          "ref": "not specified; one bad line from a proxy or a stray log write should not end the session",
+          "status": "pass",
+          "detail": "recovered",
+          "seconds": 0.392
+        },
+        {
+          "id": "id-echo",
+          "title": "response id matches the request id exactly",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5: id MUST be the same value, and the comparison is type sensitive",
+          "status": "pass",
+          "detail": "string ids round trip",
+          "seconds": 0.39
+        },
+        {
+          "id": "response-shape",
+          "title": "responses carry jsonrpc:2.0 and exactly one of result/error",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5",
+          "status": "pass",
+          "detail": "well formed",
+          "seconds": 0.386
+        },
+        {
+          "id": "notification-silence",
+          "title": "an unknown notification draws no response",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4.1: the server MUST NOT reply to a notification",
+          "status": "pass",
+          "detail": "silent",
+          "seconds": 2.392
+        },
+        {
+          "id": "invalid-params",
+          "title": "wrong-shaped params are refused",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: -32602 for invalid params",
+          "status": "fail",
+          "detail": "no response to a request whose params were a string",
+          "seconds": 8.801
+        },
+        {
+          "id": "pipelined-ids",
+          "title": "three requests in flight all come back",
+          "severity": "spec",
+          "ref": "MCP: requests are asynchronous, a client does not have to wait for each reply",
+          "status": "pass",
+          "detail": "all three, order irrelevant",
+          "seconds": 0.806
+        },
+        {
+          "id": "tools-shape",
+          "title": "every tool has a name and an object inputSchema",
+          "severity": "spec",
+          "ref": "MCP tools: name and inputSchema are required, and inputSchema is a JSON Schema object",
+          "status": "pass",
+          "detail": "6 tools, all declared properly",
+          "seconds": 0.399
+        },
+        {
+          "id": "tools-unique",
+          "title": "tool names are unique",
+          "severity": "spec",
+          "ref": "MCP tools: the name is how a tool is addressed, so duplicates are unresolvable",
+          "status": "pass",
+          "detail": "6 distinct names",
+          "seconds": 0.398
+        },
+        {
+          "id": "tools-described",
+          "title": "tools carry a description",
+          "severity": "robust",
+          "ref": "not required by the spec, but the description is the only thing a model has to choose on",
+          "status": "pass",
+          "detail": "all 6 described, shortest is 34 chars",
+          "seconds": 0.39
+        },
+        {
+          "id": "params-described",
+          "title": "tool arguments carry descriptions",
+          "severity": "robust",
+          "ref": "not required; an argument with no description is guesswork for the model filling it in",
+          "status": "pass",
+          "detail": "all 5 arguments described",
+          "seconds": 0.395
+        },
+        {
+          "id": "unknown-tool",
+          "title": "calling a tool that does not exist is an error",
+          "severity": "spec",
+          "ref": "MCP tools: an unknown tool name is an error, either a JSON-RPC error or isError on the result",
+          "status": "fail",
+          "detail": "reported success for a tool that does not exist",
+          "seconds": 0.386
+        },
+        {
+          "id": "missing-required-arg",
+          "title": "a required argument is actually enforced",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "read_query without 'query' -> isError",
+          "seconds": 0.395
+        },
+        {
+          "id": "wrong-arg-type",
+          "title": "an argument of the wrong type is rejected",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "read_query with an int for 'query' -> isError",
+          "seconds": 0.392
+        },
+        {
+          "id": "stdout-clean",
+          "title": "nothing but MCP messages goes to stdout",
+          "severity": "spec",
+          "ref": "MCP stdio transport: the server MUST NOT write anything to stdout that is not a valid MCP message",
+          "status": "pass",
+          "detail": "clean",
+          "seconds": 0.898
+        },
+        {
+          "id": "big-payload",
+          "title": "a 256KB argument does not kill the server",
+          "severity": "robust",
+          "ref": "not specified; a large paste is an ordinary thing for a model to send",
+          "status": "pass",
+          "detail": "handled, result",
+          "seconds": 0.404
+        },
+        {
+          "id": "awkward-strings",
+          "title": "control characters and astral unicode survive the wire",
+          "severity": "robust",
+          "ref": "MCP stdio transport: messages are newline delimited, so anything newline shaped is a framing risk",
+          "status": "pass",
+          "detail": "round tripped",
+          "seconds": 0.384
+        },
+        {
+          "id": "deep-nesting",
+          "title": "a deeply nested argument is refused, not fatal",
+          "severity": "robust",
+          "ref": "not specified; recursive parsers tend to blow the stack somewhere and it should be an error",
+          "status": "fail",
+          "detail": "no response to 400 levels of nesting",
+          "seconds": 15.391
+        },
+        {
+          "id": "cancel-unknown",
+          "title": "cancelling a request that is not running is ignored",
+          "severity": "robust",
+          "ref": "MCP: a cancellation for an unknown id can race legitimately, so it has to be survivable",
+          "status": "pass",
+          "detail": "ignored",
+          "seconds": 1.815
+        },
+        {
+          "id": "clean-exit",
+          "title": "closing stdin ends the process",
+          "severity": "robust",
+          "ref": "MCP stdio transport: the client shuts a server down by closing its input stream",
+          "status": "pass",
+          "detail": "exited with 0",
+          "seconds": 0.49
+        },
+        {
+          "id": "no-batch-crash",
+          "title": "a JSON-RPC batch is answered or refused, not fatal",
+          "severity": "robust",
+          "ref": "batching was removed in MCP 2025-06-18, so the useful question is only whether it is survivable",
+          "status": "pass",
+          "detail": "survived",
+          "seconds": 1.9
+        }
+      ]
+    },
+    {
+      "server": "mcp-server-calculator",
+      "command": "C:\\Users\\EuroG\\OneDrive\\Desktop\\Projects\\mcpcheck\\.venv\\Scripts\\python.exe -m mcp_server_calculator",
+      "reachable": true,
+      "problem": "",
+      "identity": "calculator 1.29.1",
+      "counts": {
+        "pass": 22,
+        "warn": 0,
+        "fail": 7,
+        "skip": 0,
+        "error": 0
+      },
+      "results": [
+        {
+          "id": "init-shape",
+          "title": "initialize returns the required fields",
+          "severity": "spec",
+          "ref": "MCP lifecycle: InitializeResult carries protocolVersion, capabilities, serverInfo",
+          "status": "pass",
+          "detail": "calculator 1.29.1, protocol 2025-06-18",
+          "seconds": 0.399
+        },
+        {
+          "id": "init-version",
+          "title": "unsupported protocol version is negotiated, not echoed",
+          "severity": "spec",
+          "ref": "MCP lifecycle: a server that does not support the requested version MUST reply with one it does",
+          "status": "pass",
+          "detail": "negotiated down to 2025-11-25",
+          "seconds": 0.391
+        },
+        {
+          "id": "init-twice",
+          "title": "a second initialize does not take the server down",
+          "severity": "robust",
+          "ref": "not specified; a client that reconnects badly should not be able to kill the process",
+          "status": "pass",
+          "detail": "still serving after a duplicate handshake",
+          "seconds": 0.393
+        },
+        {
+          "id": "pre-init",
+          "title": "a request before initialize is refused, not crashed on",
+          "severity": "robust",
+          "ref": "MCP lifecycle: clients SHOULD NOT send requests before initialize; server behaviour is unspecified",
+          "status": "pass",
+          "detail": "refused with -32602",
+          "seconds": 0.389
+        },
+        {
+          "id": "caps-honoured",
+          "title": "declared capabilities actually work",
+          "severity": "spec",
+          "ref": "MCP: a server that advertises a capability has to serve it",
+          "status": "pass",
+          "detail": "serves tools, resources, prompts",
+          "seconds": 0.396
+        },
+        {
+          "id": "unknown-method",
+          "title": "unknown method returns -32601",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "expected code -32601, got -32602 (Invalid request parameters)",
+          "seconds": 0.442
+        },
+        {
+          "id": "no-method",
+          "title": "request with no method returns -32600",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: an object without a method member is not a valid request",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.797
+        },
+        {
+          "id": "no-version",
+          "title": "request without jsonrpc:2.0 is rejected",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4: the jsonrpc member MUST be exactly '2.0'",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.802
+        },
+        {
+          "id": "parse-error",
+          "title": "broken JSON returns -32700",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "logged the parse error as a notification instead of answering it",
+          "seconds": 6.814
+        },
+        {
+          "id": "parse-error-survives",
+          "title": "the session outlives a malformed message",
+          "severity": "robust",
+          "ref": "not specified; one bad line from a proxy or a stray log write should not end the session",
+          "status": "pass",
+          "detail": "recovered",
+          "seconds": 0.394
+        },
+        {
+          "id": "id-echo",
+          "title": "response id matches the request id exactly",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5: id MUST be the same value, and the comparison is type sensitive",
+          "status": "pass",
+          "detail": "string ids round trip",
+          "seconds": 0.393
+        },
+        {
+          "id": "response-shape",
+          "title": "responses carry jsonrpc:2.0 and exactly one of result/error",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5",
+          "status": "pass",
+          "detail": "well formed",
+          "seconds": 0.38
+        },
+        {
+          "id": "notification-silence",
+          "title": "an unknown notification draws no response",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4.1: the server MUST NOT reply to a notification",
+          "status": "pass",
+          "detail": "silent",
+          "seconds": 2.395
+        },
+        {
+          "id": "invalid-params",
+          "title": "wrong-shaped params are refused",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: -32602 for invalid params",
+          "status": "fail",
+          "detail": "no response to a request whose params were a string",
+          "seconds": 8.819
+        },
+        {
+          "id": "pipelined-ids",
+          "title": "three requests in flight all come back",
+          "severity": "spec",
+          "ref": "MCP: requests are asynchronous, a client does not have to wait for each reply",
+          "status": "pass",
+          "detail": "all three, order irrelevant",
+          "seconds": 0.815
+        },
+        {
+          "id": "tools-shape",
+          "title": "every tool has a name and an object inputSchema",
+          "severity": "spec",
+          "ref": "MCP tools: name and inputSchema are required, and inputSchema is a JSON Schema object",
+          "status": "pass",
+          "detail": "1 tools, all declared properly",
+          "seconds": 0.403
+        },
+        {
+          "id": "tools-unique",
+          "title": "tool names are unique",
+          "severity": "spec",
+          "ref": "MCP tools: the name is how a tool is addressed, so duplicates are unresolvable",
+          "status": "pass",
+          "detail": "1 distinct names",
+          "seconds": 0.404
+        },
+        {
+          "id": "tools-described",
+          "title": "tools carry a description",
+          "severity": "robust",
+          "ref": "not required by the spec, but the description is the only thing a model has to choose on",
+          "status": "pass",
+          "detail": "all 1 described, shortest is 42 chars",
+          "seconds": 0.412
+        },
+        {
+          "id": "params-described",
+          "title": "tool arguments carry descriptions",
+          "severity": "robust",
+          "ref": "not required; an argument with no description is guesswork for the model filling it in",
+          "status": "fail",
+          "detail": "1 of 1 undescribed: calculate.expression",
+          "seconds": 0.42
+        },
+        {
+          "id": "unknown-tool",
+          "title": "calling a tool that does not exist is an error",
+          "severity": "spec",
+          "ref": "MCP tools: an unknown tool name is an error, either a JSON-RPC error or isError on the result",
+          "status": "pass",
+          "detail": "isError result",
+          "seconds": 0.407
+        },
+        {
+          "id": "missing-required-arg",
+          "title": "a required argument is actually enforced",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "calculate without 'expression' -> isError",
+          "seconds": 0.421
+        },
+        {
+          "id": "wrong-arg-type",
+          "title": "an argument of the wrong type is rejected",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "calculate with an int for 'expression' -> isError",
+          "seconds": 0.395
+        },
+        {
+          "id": "stdout-clean",
+          "title": "nothing but MCP messages goes to stdout",
+          "severity": "spec",
+          "ref": "MCP stdio transport: the server MUST NOT write anything to stdout that is not a valid MCP message",
+          "status": "pass",
+          "detail": "clean",
+          "seconds": 0.95
+        },
+        {
+          "id": "big-payload",
+          "title": "a 256KB argument does not kill the server",
+          "severity": "robust",
+          "ref": "not specified; a large paste is an ordinary thing for a model to send",
+          "status": "pass",
+          "detail": "handled, result",
+          "seconds": 0.402
+        },
+        {
+          "id": "awkward-strings",
+          "title": "control characters and astral unicode survive the wire",
+          "severity": "robust",
+          "ref": "MCP stdio transport: messages are newline delimited, so anything newline shaped is a framing risk",
+          "status": "pass",
+          "detail": "round tripped",
+          "seconds": 0.392
+        },
+        {
+          "id": "deep-nesting",
+          "title": "a deeply nested argument is refused, not fatal",
+          "severity": "robust",
+          "ref": "not specified; recursive parsers tend to blow the stack somewhere and it should be an error",
+          "status": "fail",
+          "detail": "no response to 400 levels of nesting",
+          "seconds": 15.389
+        },
+        {
+          "id": "cancel-unknown",
+          "title": "cancelling a request that is not running is ignored",
+          "severity": "robust",
+          "ref": "MCP: a cancellation for an unknown id can race legitimately, so it has to be survivable",
+          "status": "pass",
+          "detail": "ignored",
+          "seconds": 1.836
+        },
+        {
+          "id": "clean-exit",
+          "title": "closing stdin ends the process",
+          "severity": "robust",
+          "ref": "MCP stdio transport: the client shuts a server down by closing its input stream",
+          "status": "pass",
+          "detail": "exited with 0",
+          "seconds": 0.468
+        },
+        {
+          "id": "no-batch-crash",
+          "title": "a JSON-RPC batch is answered or refused, not fatal",
+          "severity": "robust",
+          "ref": "batching was removed in MCP 2025-06-18, so the useful question is only whether it is survivable",
+          "status": "pass",
+          "detail": "survived",
+          "seconds": 1.907
+        }
+      ]
+    },
+    {
+      "server": "duckduckgo-mcp-server",
+      "command": "C:\\Users\\EuroG\\OneDrive\\Desktop\\Projects\\mcpcheck\\.venv\\Scripts\\python.exe -c from duckduckgo_mcp_server.server import main; main()",
+      "reachable": true,
+      "problem": "",
+      "identity": "ddg-search 1.29.1",
+      "counts": {
+        "pass": 22,
+        "warn": 0,
+        "fail": 7,
+        "skip": 0,
+        "error": 0
+      },
+      "results": [
+        {
+          "id": "init-shape",
+          "title": "initialize returns the required fields",
+          "severity": "spec",
+          "ref": "MCP lifecycle: InitializeResult carries protocolVersion, capabilities, serverInfo",
+          "status": "pass",
+          "detail": "ddg-search 1.29.1, protocol 2025-06-18",
+          "seconds": 0.43
+        },
+        {
+          "id": "init-version",
+          "title": "unsupported protocol version is negotiated, not echoed",
+          "severity": "spec",
+          "ref": "MCP lifecycle: a server that does not support the requested version MUST reply with one it does",
+          "status": "pass",
+          "detail": "negotiated down to 2025-11-25",
+          "seconds": 0.426
+        },
+        {
+          "id": "init-twice",
+          "title": "a second initialize does not take the server down",
+          "severity": "robust",
+          "ref": "not specified; a client that reconnects badly should not be able to kill the process",
+          "status": "pass",
+          "detail": "still serving after a duplicate handshake",
+          "seconds": 0.417
+        },
+        {
+          "id": "pre-init",
+          "title": "a request before initialize is refused, not crashed on",
+          "severity": "robust",
+          "ref": "MCP lifecycle: clients SHOULD NOT send requests before initialize; server behaviour is unspecified",
+          "status": "pass",
+          "detail": "refused with -32602",
+          "seconds": 0.415
+        },
+        {
+          "id": "caps-honoured",
+          "title": "declared capabilities actually work",
+          "severity": "spec",
+          "ref": "MCP: a server that advertises a capability has to serve it",
+          "status": "pass",
+          "detail": "serves tools, resources, prompts",
+          "seconds": 0.427
+        },
+        {
+          "id": "unknown-method",
+          "title": "unknown method returns -32601",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "expected code -32601, got -32602 (Invalid request parameters)",
+          "seconds": 0.472
+        },
+        {
+          "id": "no-method",
+          "title": "request with no method returns -32600",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: an object without a method member is not a valid request",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.835
+        },
+        {
+          "id": "no-version",
+          "title": "request without jsonrpc:2.0 is rejected",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4: the jsonrpc member MUST be exactly '2.0'",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 6.828
+        },
+        {
+          "id": "parse-error",
+          "title": "broken JSON returns -32700",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "logged the parse error as a notification instead of answering it",
+          "seconds": 6.852
+        },
+        {
+          "id": "parse-error-survives",
+          "title": "the session outlives a malformed message",
+          "severity": "robust",
+          "ref": "not specified; one bad line from a proxy or a stray log write should not end the session",
+          "status": "pass",
+          "detail": "recovered",
+          "seconds": 0.465
+        },
+        {
+          "id": "id-echo",
+          "title": "response id matches the request id exactly",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5: id MUST be the same value, and the comparison is type sensitive",
+          "status": "pass",
+          "detail": "string ids round trip",
+          "seconds": 0.448
+        },
+        {
+          "id": "response-shape",
+          "title": "responses carry jsonrpc:2.0 and exactly one of result/error",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5",
+          "status": "pass",
+          "detail": "well formed",
+          "seconds": 0.451
+        },
+        {
+          "id": "notification-silence",
+          "title": "an unknown notification draws no response",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4.1: the server MUST NOT reply to a notification",
+          "status": "pass",
+          "detail": "silent",
+          "seconds": 2.454
+        },
+        {
+          "id": "invalid-params",
+          "title": "wrong-shaped params are refused",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: -32602 for invalid params",
+          "status": "fail",
+          "detail": "no response to a request whose params were a string",
+          "seconds": 8.878
+        },
+        {
+          "id": "pipelined-ids",
+          "title": "three requests in flight all come back",
+          "severity": "spec",
+          "ref": "MCP: requests are asynchronous, a client does not have to wait for each reply",
+          "status": "pass",
+          "detail": "all three, order irrelevant",
+          "seconds": 0.842
+        },
+        {
+          "id": "tools-shape",
+          "title": "every tool has a name and an object inputSchema",
+          "severity": "spec",
+          "ref": "MCP tools: name and inputSchema are required, and inputSchema is a JSON Schema object",
+          "status": "pass",
+          "detail": "2 tools, all declared properly",
+          "seconds": 0.423
+        },
+        {
+          "id": "tools-unique",
+          "title": "tool names are unique",
+          "severity": "spec",
+          "ref": "MCP tools: the name is how a tool is addressed, so duplicates are unresolvable",
+          "status": "pass",
+          "detail": "2 distinct names",
+          "seconds": 0.418
+        },
+        {
+          "id": "tools-described",
+          "title": "tools carry a description",
+          "severity": "robust",
+          "ref": "not required by the spec, but the description is the only thing a model has to choose on",
+          "status": "pass",
+          "detail": "all 2 described, shortest is 927 chars",
+          "seconds": 0.418
+        },
+        {
+          "id": "params-described",
+          "title": "tool arguments carry descriptions",
+          "severity": "robust",
+          "ref": "not required; an argument with no description is guesswork for the model filling it in",
+          "status": "fail",
+          "detail": "7 of 7 undescribed: search.query, search.max_results, search.region, fetch_content.url, fetch_content.start_index",
+          "seconds": 0.417
+        },
+        {
+          "id": "unknown-tool",
+          "title": "calling a tool that does not exist is an error",
+          "severity": "spec",
+          "ref": "MCP tools: an unknown tool name is an error, either a JSON-RPC error or isError on the result",
+          "status": "pass",
+          "detail": "isError result",
+          "seconds": 0.434
+        },
+        {
+          "id": "missing-required-arg",
+          "title": "a required argument is actually enforced",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "search without 'query' -> isError",
+          "seconds": 0.426
+        },
+        {
+          "id": "wrong-arg-type",
+          "title": "an argument of the wrong type is rejected",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "search with an int for 'query' -> isError",
+          "seconds": 0.424
+        },
+        {
+          "id": "stdout-clean",
+          "title": "nothing but MCP messages goes to stdout",
+          "severity": "spec",
+          "ref": "MCP stdio transport: the server MUST NOT write anything to stdout that is not a valid MCP message",
+          "status": "pass",
+          "detail": "clean",
+          "seconds": 0.976
+        },
+        {
+          "id": "big-payload",
+          "title": "a 256KB argument does not kill the server",
+          "severity": "robust",
+          "ref": "not specified; a large paste is an ordinary thing for a model to send",
+          "status": "pass",
+          "detail": "handled, result",
+          "seconds": 0.425
+        },
+        {
+          "id": "awkward-strings",
+          "title": "control characters and astral unicode survive the wire",
+          "severity": "robust",
+          "ref": "MCP stdio transport: messages are newline delimited, so anything newline shaped is a framing risk",
+          "status": "pass",
+          "detail": "round tripped",
+          "seconds": 0.421
+        },
+        {
+          "id": "deep-nesting",
+          "title": "a deeply nested argument is refused, not fatal",
+          "severity": "robust",
+          "ref": "not specified; recursive parsers tend to blow the stack somewhere and it should be an error",
+          "status": "fail",
+          "detail": "no response to 400 levels of nesting",
+          "seconds": 15.418
+        },
+        {
+          "id": "cancel-unknown",
+          "title": "cancelling a request that is not running is ignored",
+          "severity": "robust",
+          "ref": "MCP: a cancellation for an unknown id can race legitimately, so it has to be survivable",
+          "status": "pass",
+          "detail": "ignored",
+          "seconds": 1.844
+        },
+        {
+          "id": "clean-exit",
+          "title": "closing stdin ends the process",
+          "severity": "robust",
+          "ref": "MCP stdio transport: the client shuts a server down by closing its input stream",
+          "status": "pass",
+          "detail": "exited with 0",
+          "seconds": 0.501
+        },
+        {
+          "id": "no-batch-crash",
+          "title": "a JSON-RPC batch is answered or refused, not fatal",
+          "severity": "robust",
+          "ref": "batching was removed in MCP 2025-06-18, so the useful question is only whether it is survivable",
+          "status": "pass",
+          "detail": "survived",
+          "seconds": 1.934
+        }
+      ]
+    },
+    {
+      "server": "mcp-simple-arxiv",
+      "command": "C:\\Users\\EuroG\\OneDrive\\Desktop\\Projects\\mcpcheck\\.venv\\Scripts\\python.exe -m mcp_simple_arxiv",
+      "reachable": true,
+      "problem": "",
+      "identity": "arxiv-server 0.6.0",
+      "counts": {
+        "pass": 22,
+        "warn": 0,
+        "fail": 7,
+        "skip": 0,
+        "error": 0
+      },
+      "results": [
+        {
+          "id": "init-shape",
+          "title": "initialize returns the required fields",
+          "severity": "spec",
+          "ref": "MCP lifecycle: InitializeResult carries protocolVersion, capabilities, serverInfo",
+          "status": "pass",
+          "detail": "arxiv-server 0.6.0, protocol 2025-06-18",
+          "seconds": 3.373
+        },
+        {
+          "id": "init-version",
+          "title": "unsupported protocol version is negotiated, not echoed",
+          "severity": "spec",
+          "ref": "MCP lifecycle: a server that does not support the requested version MUST reply with one it does",
+          "status": "pass",
+          "detail": "negotiated down to 2025-11-25",
+          "seconds": 3.353
+        },
+        {
+          "id": "init-twice",
+          "title": "a second initialize does not take the server down",
+          "severity": "robust",
+          "ref": "not specified; a client that reconnects badly should not be able to kill the process",
+          "status": "pass",
+          "detail": "still serving after a duplicate handshake",
+          "seconds": 3.398
+        },
+        {
+          "id": "pre-init",
+          "title": "a request before initialize is refused, not crashed on",
+          "severity": "robust",
+          "ref": "MCP lifecycle: clients SHOULD NOT send requests before initialize; server behaviour is unspecified",
+          "status": "pass",
+          "detail": "refused with -32602",
+          "seconds": 3.481
+        },
+        {
+          "id": "caps-honoured",
+          "title": "declared capabilities actually work",
+          "severity": "spec",
+          "ref": "MCP: a server that advertises a capability has to serve it",
+          "status": "pass",
+          "detail": "serves tools, resources, prompts",
+          "seconds": 3.626
+        },
+        {
+          "id": "unknown-method",
+          "title": "unknown method returns -32601",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "expected code -32601, got -32602 (Invalid request parameters)",
+          "seconds": 3.494
+        },
+        {
+          "id": "no-method",
+          "title": "request with no method returns -32600",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: an object without a method member is not a valid request",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 9.845
+        },
+        {
+          "id": "no-version",
+          "title": "request without jsonrpc:2.0 is rejected",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4: the jsonrpc member MUST be exactly '2.0'",
+          "status": "fail",
+          "detail": "dropped silently - no response of any kind, so a client just waits",
+          "seconds": 9.999
+        },
+        {
+          "id": "parse-error",
+          "title": "broken JSON returns -32700",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1",
+          "status": "fail",
+          "detail": "logged the parse error as a notification instead of answering it",
+          "seconds": 9.989
+        },
+        {
+          "id": "parse-error-survives",
+          "title": "the session outlives a malformed message",
+          "severity": "robust",
+          "ref": "not specified; one bad line from a proxy or a stray log write should not end the session",
+          "status": "pass",
+          "detail": "recovered",
+          "seconds": 3.4
+        },
+        {
+          "id": "id-echo",
+          "title": "response id matches the request id exactly",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5: id MUST be the same value, and the comparison is type sensitive",
+          "status": "pass",
+          "detail": "string ids round trip",
+          "seconds": 3.361
+        },
+        {
+          "id": "response-shape",
+          "title": "responses carry jsonrpc:2.0 and exactly one of result/error",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5",
+          "status": "pass",
+          "detail": "well formed",
+          "seconds": 3.332
+        },
+        {
+          "id": "notification-silence",
+          "title": "an unknown notification draws no response",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s4.1: the server MUST NOT reply to a notification",
+          "status": "pass",
+          "detail": "silent",
+          "seconds": 5.36
+        },
+        {
+          "id": "invalid-params",
+          "title": "wrong-shaped params are refused",
+          "severity": "spec",
+          "ref": "JSON-RPC 2.0 s5.1: -32602 for invalid params",
+          "status": "fail",
+          "detail": "no response to a request whose params were a string",
+          "seconds": 11.999
+        },
+        {
+          "id": "pipelined-ids",
+          "title": "three requests in flight all come back",
+          "severity": "spec",
+          "ref": "MCP: requests are asynchronous, a client does not have to wait for each reply",
+          "status": "pass",
+          "detail": "all three, order irrelevant",
+          "seconds": 3.901
+        },
+        {
+          "id": "tools-shape",
+          "title": "every tool has a name and an object inputSchema",
+          "severity": "spec",
+          "ref": "MCP tools: name and inputSchema are required, and inputSchema is a JSON Schema object",
+          "status": "pass",
+          "detail": "5 tools, all declared properly",
+          "seconds": 3.451
+        },
+        {
+          "id": "tools-unique",
+          "title": "tool names are unique",
+          "severity": "spec",
+          "ref": "MCP tools: the name is how a tool is addressed, so duplicates are unresolvable",
+          "status": "pass",
+          "detail": "5 distinct names",
+          "seconds": 3.463
+        },
+        {
+          "id": "tools-described",
+          "title": "tools carry a description",
+          "severity": "robust",
+          "ref": "not required by the spec, but the description is the only thing a model has to choose on",
+          "status": "pass",
+          "detail": "all 5 described, shortest is 81 chars",
+          "seconds": 3.507
+        },
+        {
+          "id": "params-described",
+          "title": "tool arguments carry descriptions",
+          "severity": "robust",
+          "ref": "not required; an argument with no description is guesswork for the model filling it in",
+          "status": "fail",
+          "detail": "9 of 9 undescribed: search_papers.query, search_papers.max_results, search_papers.sort_by, search_papers.sort_order, search_papers.date_from",
+          "seconds": 3.528
+        },
+        {
+          "id": "unknown-tool",
+          "title": "calling a tool that does not exist is an error",
+          "severity": "spec",
+          "ref": "MCP tools: an unknown tool name is an error, either a JSON-RPC error or isError on the result",
+          "status": "pass",
+          "detail": "isError result",
+          "seconds": 3.492
+        },
+        {
+          "id": "missing-required-arg",
+          "title": "a required argument is actually enforced",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "search_papers without 'query' -> isError",
+          "seconds": 3.446
+        },
+        {
+          "id": "wrong-arg-type",
+          "title": "an argument of the wrong type is rejected",
+          "severity": "robust",
+          "ref": "MCP: servers SHOULD validate arguments against the schema they published",
+          "status": "pass",
+          "detail": "search_papers with an int for 'query' -> isError",
+          "seconds": 3.464
+        },
+        {
+          "id": "stdout-clean",
+          "title": "nothing but MCP messages goes to stdout",
+          "severity": "spec",
+          "ref": "MCP stdio transport: the server MUST NOT write anything to stdout that is not a valid MCP message",
+          "status": "pass",
+          "detail": "clean",
+          "seconds": 3.949
+        },
+        {
+          "id": "big-payload",
+          "title": "a 256KB argument does not kill the server",
+          "severity": "robust",
+          "ref": "not specified; a large paste is an ordinary thing for a model to send",
+          "status": "pass",
+          "detail": "handled, result",
+          "seconds": 3.407
+        },
+        {
+          "id": "awkward-strings",
+          "title": "control characters and astral unicode survive the wire",
+          "severity": "robust",
+          "ref": "MCP stdio transport: messages are newline delimited, so anything newline shaped is a framing risk",
+          "status": "pass",
+          "detail": "round tripped",
+          "seconds": 3.519
+        },
+        {
+          "id": "deep-nesting",
+          "title": "a deeply nested argument is refused, not fatal",
+          "severity": "robust",
+          "ref": "not specified; recursive parsers tend to blow the stack somewhere and it should be an error",
+          "status": "fail",
+          "detail": "no response to 400 levels of nesting",
+          "seconds": 18.645
+        },
+        {
+          "id": "cancel-unknown",
+          "title": "cancelling a request that is not running is ignored",
+          "severity": "robust",
+          "ref": "MCP: a cancellation for an unknown id can race legitimately, so it has to be survivable",
+          "status": "pass",
+          "detail": "ignored",
+          "seconds": 4.81
+        },
+        {
+          "id": "clean-exit",
+          "title": "closing stdin ends the process",
+          "severity": "robust",
+          "ref": "MCP stdio transport: the client shuts a server down by closing its input stream",
+          "status": "pass",
+          "detail": "exited with 0",
+          "seconds": 4.276
+        },
+        {
+          "id": "no-batch-crash",
+          "title": "a JSON-RPC batch is answered or refused, not fatal",
+          "severity": "robust",
+          "ref": "batching was removed in MCP 2025-06-18, so the useful question is only whether it is survivable",
+          "status": "pass",
+          "detail": "survived",
+          "seconds": 5.074
+        }
+      ]
+    },
+    {
+      "server": "mcp-server-docker",
+      "command": "C:\\Users\\EuroG\\OneDrive\\Desktop\\Projects\\mcpcheck\\.venv\\Scripts\\python.exe -c from mcp_server_docker import main; main()",
+      "reachable": false,
+      "problem": "exited during initialize:         f'Error while fetching server API version: {e}' |     ) from e | docker.errors.DockerException: Error while fetching server API version: (2, 'CreateFile', 'The system cannot find the file spec",
+      "identity": "",
+      "counts": {
+        "pass": 0,
+        "warn": 0,
+        "fail": 0,
+        "skip": 0,
+        "error": 0
+      },
+      "results": []
+    }
+  ]
+}

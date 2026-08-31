@@ -1,0 +1,78 @@
+{
+  "servers": [
+    {
+      "name": "mcp-server-git",
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp_server_git"
+      ],
+      "notes": "official reference server"
+    },
+    {
+      "name": "mcp-server-time",
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp_server_time"
+      ],
+      "notes": "official reference server"
+    },
+    {
+      "name": "mcp-server-fetch",
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp_server_fetch"
+      ],
+      "notes": "official reference server"
+    },
+    {
+      "name": "mcp-server-sqlite",
+      "command": "python",
+      "args": [
+        "-c",
+        "from mcp_server_sqlite import main; main()",
+        "--db-path",
+        "data/scratch.db"
+      ],
+      "notes": "official reference server, archived"
+    },
+    {
+      "name": "mcp-server-calculator",
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp_server_calculator"
+      ],
+      "notes": "community, built on the python sdk"
+    },
+    {
+      "name": "duckduckgo-mcp-server",
+      "command": "python",
+      "args": [
+        "-c",
+        "from duckduckgo_mcp_server.server import main; main()"
+      ],
+      "notes": "community, built on fastmcp"
+    },
+    {
+      "name": "mcp-simple-arxiv",
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp_simple_arxiv"
+      ],
+      "notes": "community"
+    },
+    {
+      "name": "mcp-server-docker",
+      "command": "python",
+      "args": [
+        "-c",
+        "from mcp_server_docker import main; main()"
+      ],
+      "notes": "community, needs a docker daemon"
+    }
+  ]
+}
