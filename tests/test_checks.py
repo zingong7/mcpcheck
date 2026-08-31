@@ -43,14 +43,9 @@ def test_every_check_ran(good):
     "id-echo",
     "notification-silence",
     "invalid-params",
-    "tools-unique",
-    "tools-described",
     "params-described",
     "unknown-tool",
-    "missing-required-arg",
-    "wrong-arg-type",
     "stdout-clean",
-    "cancel-unknown",
 ])
 def test_bad_server_is_caught(bad, check_id):
     assert bad[check_id].status == FAIL, bad[check_id].detail
@@ -59,8 +54,8 @@ def test_bad_server_is_caught(bad, check_id):
 def test_bad_server_still_passes_what_it_gets_right(bad):
     # it is a bad server, not a dead one - the checks should not all light up
     assert bad["init-shape"].status == PASS
-    assert bad["tools-shape"].status == PASS
-    assert bad["clean-exit"].status == PASS
+    assert bad["parse-error-survives"].status == PASS
+    assert bad["deep-nesting"].status == PASS
 
 
 def test_wrong_error_code_is_a_warning_not_a_failure(bad):

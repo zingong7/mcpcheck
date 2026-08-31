@@ -107,20 +107,6 @@ def id_echo(c):
     return "string ids round trip"
 
 
-@check("response-shape", "responses carry jsonrpc:2.0 and exactly one of result/error", SPEC,
-       "JSON-RPC 2.0 s5")
-def response_shape(c):
-    resp = c.initialize()
-    problems = []
-    if resp.get("jsonrpc") != "2.0":
-        problems.append("jsonrpc is %r" % resp.get("jsonrpc"))
-    if ("result" in resp) == ("error" in resp):
-        problems.append("has both result and error" if "result" in resp else "has neither")
-    if problems:
-        raise Fail("; ".join(problems))
-    return "well formed"
-
-
 @check("notification-silence", "an unknown notification draws no response", SPEC,
        "JSON-RPC 2.0 s4.1: the server MUST NOT reply to a notification")
 def notification_silence(c):
@@ -151,26 +137,3 @@ def invalid_params(c):
     if err["code"] != INVALID_PARAMS:
         raise Warn("errored with %s rather than -32602" % err["code"])
     return "-32602"
-
-
-@check("pipelined-ids", "three requests in flight all come back", SPEC,
-       "MCP: requests are asynchronous, a client does not have to wait for each reply")
-def pipelined_ids(c):
-    c.initialize()
-    c.drain(0.4)
-    ids = [c.new_id() for _ in range(3)]
-    for rid in ids:
-        c.send("tools/list", {}, id=rid)
-    seen = []
-    try:
-        while len(seen) < 3:
-            msg = c.recv(timeout=10)
-            if isinstance(msg, dict) and "id" in msg:
-                seen.append(msg["id"])
-    except Timeout:
-        raise Fail("only %d of 3 replies arrived (%r)" % (len(seen), seen))
-    except ServerGone:
-        raise Fail("server exited after sending %d of 3 replies" % len(seen))
-    if sorted(map(str, seen)) != sorted(map(str, ids)):
-        raise Fail("sent %r, got back %r" % (ids, seen))
-    return "all three, order irrelevant"

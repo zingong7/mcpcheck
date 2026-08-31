@@ -25,7 +25,7 @@ Run on 2026-08-30 against the MCP servers I could install from PyPI.
 | mcp-simple-arxiv | **fail** | **fail** | **fail** | **fail** | ok | **fail** | **fail** | ok | **fail** | ok |
 | mcp-server-docker | did not start (no docker daemon on this machine) |
 
-19 other checks passed everywhere and are left out. Full output in
+5 other checks passed everywhere and are left out. Full output in
 `data/results.json`.
 
 All seven are Python servers on `mcp` 1.29.1, so the columns that are red
@@ -107,9 +107,9 @@ Exit status is 1 if a `spec` check failed, so it can run in CI.
 
 ## The checks
 
-29 of them, tagged either `spec` (a MUST in JSON-RPC 2.0 or the MCP spec) or
-`robust` (not required, but painful when wrong - surviving a bad line, a 256KB
-argument, control characters in a string, exiting when stdin closes). A `warn`
+15 of them, tagged either `spec` (a MUST in JSON-RPC 2.0 or the MCP spec) or
+`robust` (not required, but painful when wrong - surviving a malformed line,
+handling a deeply nested payload, saying what a tool's arguments mean). A `warn`
 result means the server answered but with the wrong error code, which is not as
 bad as not answering at all.
 
@@ -120,9 +120,8 @@ has no dependencies of its own.
 Each check runs in a fresh process, since several of them test what state the
 server is in after being mistreated.
 
-No check ever calls a real tool with working arguments. The payload checks use a
-tool name that does not exist, and the validation checks send arguments meant to
-be rejected.
+No check ever calls a real tool. The only tool name mcpcheck sends is one no
+server has, so pointing it at something with side effects is safe.
 
 ## Tests
 
@@ -130,7 +129,7 @@ be rejected.
 python -m pytest tests -q
 ```
 
-28 tests, no network. They run the battery against two servers in
+23 tests, no network. They run the battery against two servers in
 `tests/servers/`: one written correctly, and one with a list of faults on
 purpose - banner on stdout, echoed protocol version, ids coerced to integers,
 answers notifications, reports success for tools that do not exist. Each fault

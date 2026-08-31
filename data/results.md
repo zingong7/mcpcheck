@@ -9,7 +9,7 @@
 | mcp-simple-arxiv | **fail** | **fail** | **fail** | **fail** | ok | **fail** | **fail** | ok | **fail** | ok |
 | mcp-server-docker | did not start |  |  |  |  |  |  |  |  |  |
 
-19 further checks passed on every server and are left out.
+5 further checks passed on every server and are left out.
 
 - **mcp-server-git** / `unknown-method` (spec) - expected code -32601, got -32602 (Invalid request parameters)
 - **mcp-server-git** / `no-method` (spec) - dropped silently - no response of any kind, so a client just waits
