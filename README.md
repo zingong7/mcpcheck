@@ -52,6 +52,47 @@ of `-32601 Method not found`.
 `deep-nesting` is the same problem - past about 150 levels the message fails
 validation and gets dropped like the others.
 
+It is the SDK, not the servers. A server built on the SDK and nothing else fails
+the same five checks:
+
+```python
+import anyio
+import mcp.server.stdio
+from mcp.server.lowlevel import Server
+
+server = Server("minimal")
+
+
+@server.list_tools()
+async def list_tools():
+    return []
+
+
+async def main():
+    async with mcp.server.stdio.stdio_server() as (read, write):
+        await server.run(read, write, server.create_initialization_options())
+
+
+anyio.run(main)
+```
+
+The reason is in `mcp/server/lowlevel/server.py`. A message that fails to parse
+arrives at `_handle_message` as an exception, and gets this:
+
+```python
+case Exception():  # pragma: no cover
+    logger.error(f"Received exception from stream: {message}")
+    await session.send_log_message(
+        level="error",
+        data="Internal Server Error",
+        logger="mcp.server.exception_handler",
+    )
+```
+
+No branch sends an error response, because the request id was lost when parsing
+failed. The `no cover` marker means the SDK's own test suite never reaches this
+path, which is presumably why it went unnoticed.
+
 ### mcp-server-sqlite says a missing tool worked
 
 ```json
